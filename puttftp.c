@@ -13,18 +13,19 @@ int main(int argc, char **argv)
 {
 
 	struct addrinfo hints, *result, *rp;
-	
+	struct sockaddr_in server_socket;
+
 	memset(&hints, 0, sizeof(struct addrinfo)); 
 	hints.ai_family = AF_INET;     
     hints.ai_socktype = SOCK_STREAM;
 
 	char hostname[BUFSIZE];
 	char file[BUFSIZE];
-
-	int status;
 	char* port = "23";
 
 	int status;
+	int sock;
+	int port_int = 23;
 
 	if(argc != 3)
 	{
@@ -33,18 +34,31 @@ int main(int argc, char **argv)
 	else
 	{
 			
-	strncpy(hostname, argv[1], BUFSIZE - 1);
-    hostname[BUFSIZE - 1] = '\0';
+		strncpy(hostname, argv[1], BUFSIZE - 1);
+		hostname[BUFSIZE - 1] = '\0';
 
-    strncpy(file, argv[2], BUFSIZE - 1);
-    file[BUFSIZE - 1] = '\0';
+		strncpy(file, argv[2], BUFSIZE - 1);
+		file[BUFSIZE - 1] = '\0';
 
-	status = getaddrinfo(hostname, port, &hints, &result);
-		if (status != 0) {
-			fprintf(stderr, "ERROR : %s\n", gai_strerror(status));
+		status = getaddrinfo(hostname, port, &hints, &result);
+			if (status != 0) {
+				fprintf(stderr, "ERROR : %s\n", gai_strerror(status));
+				exit(EXIT_FAILURE);
+			}
+		
+		if((sock = socket(AF_INET,SOCK_STREAM,0))<0)
+		{
+			perror("Socket error");
 			exit(EXIT_FAILURE);
 		}
 
-	freeaddrinfo(result);
+		if (connect(sock, result->ai_addr, result->ai_addrlen) != 0)
+		{
+			perror("Connect error");
+			close(sock);
+			freeaddrinfo(result);
+			exit(EXIT_FAILURE);
+		}
+		freeaddrinfo(result);
 	}
 }

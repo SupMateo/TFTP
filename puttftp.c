@@ -4,9 +4,13 @@
 #include <stdlib.h>
 
 #define FD_TERMINAL_OUT 1
+#define BUFSIZE 1024
 
 int main(int argc, char **argv)
 {
+	char server[BUFSIZE];
+	char file[BUFSIZE];
+	
 	if(argc != 3)
 	{
 		write(FD_TERMINAL_OUT,"Syntax : ./puttftp.c hostname file\n",strlen("Syntaxe : ./gettftp.c hostname file\n"));

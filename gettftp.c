@@ -22,4 +22,5 @@ int main(int argc, char **argv)
 
         strncpy(file, argv[2], BUFSIZE - 1);
         file[BUFSIZE - 1] = '\0';
+	}
 }
